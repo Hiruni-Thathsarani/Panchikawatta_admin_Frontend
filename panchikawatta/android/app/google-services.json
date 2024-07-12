@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200669196263",
+    "project_id": "panchikawatta-d9e2e",
+    "storage_bucket": "panchikawatta-d9e2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200669196263:android:287ecaa5c94e5d4cb05742",
+        "android_client_info": {
+          "package_name": "com.example.panchikawatta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg8gUhnbgogRFfktoF7TZB1k1wfs5OxHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
