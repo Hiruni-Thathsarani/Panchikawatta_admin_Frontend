@@ -61,7 +61,7 @@ class _AdminPageState extends State<AdminPage> {
       _selectedIndex = index;
     });
 
-    // Navigate to the selected page
+    
     switch (index) {
       case 0:
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AdminPage()));
@@ -83,7 +83,7 @@ class _AdminPageState extends State<AdminPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Portal'),
-        automaticallyImplyLeading: false, // Remove the back button
+        automaticallyImplyLeading: false, 
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _futureData,

@@ -61,7 +61,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         lastName = data['lastName'];
         email = data['email'];
         phoneNo = data['phoneNo'];
-        imageUrl = data['imageUrls'][0] ?? defaultImageUrl; 
+        imageUrl = data['imageUrls'][0] ?? defaultImageUrl;
 
         // Check if seller details are present
         if (data['seller'] != null) {
@@ -79,17 +79,45 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   Future<void> deleteUser() async {
-    final response = await http.delete(
-      Uri.parse('http://10.0.2.2:8000/admin/users/email/${widget.email}'),
+    // Show confirmation dialog
+    bool? confirmDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this user?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // User clicked the cancel button
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // User clicked the confirm button
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
 
-    if (response.statusCode == 200) {
-      // Navigate back to ManageAccount page after successful deletion
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-        return const ManageAccount();
-      }));
-    } else {
-      throw Exception('Failed to delete user');
+    if (confirmDelete == true) {
+      final response = await http.delete(
+        Uri.parse('http://10.0.2.2:8000/admin/users/email/${widget.email}'),
+      );
+      print(widget.email);
+
+      if (response.statusCode == 200) {
+        // Navigate back to ManageAccount page after successful deletion
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          return const ManageAccount();
+        }));
+      } else {
+        throw Exception('Failed to delete user');
+      }
     }
   }
 
@@ -184,7 +212,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      
                       ElevatedButton(
                         onPressed: deleteUser,
                         child: const Text('Delete'),

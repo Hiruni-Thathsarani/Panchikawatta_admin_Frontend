@@ -7,7 +7,7 @@ class User {
   final String businessContact;
   final String businessName;
   final String businessDescription;
-  final String? imageUrls; // Add imageUrl property
+  final List<String>? imageUrls;
 
   User({
     required this.name,
@@ -18,7 +18,7 @@ class User {
     required this.businessContact,
     required this.businessName,
     required this.businessDescription,
-    required this.imageUrls, // Initialize imageUrl
+    required this.imageUrls,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -32,7 +32,7 @@ class User {
       businessContact: json['businessContact'] ?? '',
       businessName: json['businessName'] ?? '',
       businessDescription: json['businessDescription'] ?? '',
-      imageUrls: json['imageUrl'], // Ensure imageUrl is correctly parsed
+      imageUrls: json['imageUrls'] != null ? List<String>.from(json['imageUrls']) : [],
     );
   }
 

@@ -98,8 +98,8 @@ class _ManageAccountState extends State<ManageAccount> {
 
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: user.imageUrls != null && user.imageUrls!.isNotEmpty
-                        ? NetworkImage(user.imageUrls!)
+                    backgroundImage: (user.imageUrls != null && user.imageUrls!.isNotEmpty)
+                        ? NetworkImage(user.imageUrls!.first)
                         : const NetworkImage('https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png'),
                   ),
                   title: Text(user.name),
