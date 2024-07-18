@@ -32,11 +32,14 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<void> fetchUsers() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8000/admin/user-details')); // Update the URL to match your backend
+    final response = await http.get(Uri.parse('http://10.0.2.2:8000/admin/user-details'));
 
     if (response.statusCode == 200) {
+      List<dynamic> usersJson = json.decode(response.body);
+      List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(usersJson.map((user) => Map<String, dynamic>.from(user)));
+      
       setState(() {
-        contacts = List<Map<String, dynamic>>.from(json.decode(response.body));
+        contacts = users;
         filteredContacts = contacts;
       });
     } else {
@@ -49,7 +52,9 @@ class _UsersPageState extends State<UsersPage> {
     final query = searchController.text.toLowerCase();
     setState(() {
       filteredContacts = contacts.where((contact) {
-        final name = contact['firstName']?.toLowerCase() + ' ' + contact['lastName']?.toLowerCase();
+        final name = contact['firstName']?.toLowerCase() +
+            ' ' +
+            contact['lastName']?.toLowerCase();
         final email = contact['email']!.toLowerCase();
         return name.contains(query) || email.contains(query);
       }).toList();
@@ -79,7 +84,9 @@ class _UsersPageState extends State<UsersPage> {
                     children: [
                       ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(contact['imageUrl'] ?? 'https://via.placeholder.com/48'),
+                          backgroundImage: NetworkImage(contact['imageUrl'] != null && contact['imageUrl'].isNotEmpty
+                              ? contact['imageUrl']
+                              : 'https://via.placeholder.com/48'),
                           radius: 24,
                         ),
                         title: Text('${contact['firstName']} ${contact['lastName']}'),
@@ -119,18 +126,18 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
-          backgroundColor: const Color(0xFFFF5C01), // Set custom color
-          title: const Text('Buyers Details'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF5C01), // Set custom color
+        title: const Text('Buyers Details'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return  const AdminPage();
-                }));
-                        },
-          ),
+              return const AdminPage();
+            }));
+          },
         ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -155,7 +162,9 @@ class _UsersPageState extends State<UsersPage> {
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(contact['imageUrl'] ?? 'https://via.placeholder.com/48'),
+                      backgroundImage: NetworkImage(contact['imageUrl'] != null && contact['imageUrl'].isNotEmpty
+                          ? contact['imageUrl']
+                          : 'https://via.placeholder.com/48'),
                       radius: 24,
                     ),
                     title: Text('${contact['firstName']} ${contact['lastName']}'),
@@ -179,5 +188,3 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 }
-
-

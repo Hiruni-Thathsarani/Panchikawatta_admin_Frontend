@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:panchikawatta/screens/admin/admin_page.dart';
 import 'dart:convert';
 import 'User.dart'; // Import the User class
-import 'user_details_page.dart'; // Import the UserDetailsPage
+import 'user_details_page.dart'; // Import the UserDetailsScreen
+import 'package:panchikawatta/screens/admin/admin_page.dart';
 
 class ManageAccount extends StatefulWidget {
   const ManageAccount({Key? key}) : super(key: key);
@@ -40,6 +40,7 @@ class _ManageAccountState extends State<ManageAccount> {
         users = List<User>.from(json.decode(response.body).map((data) => User.fromJson(data)));
         filteredUsers = List<User>.from(users); // Initialize filtered users with a copy of the full user list
       });
+      printAllUserImages();
     } else {
       // Handle the error
       print('Failed to load users');
@@ -56,62 +57,27 @@ class _ManageAccountState extends State<ManageAccount> {
     });
   }
 
-  Future<void> deleteUser(User user) async {
-    final response = await http.delete(Uri.parse('http://10.0.2.2:8000/admin/user-delete/${user.id}')); // Use user ID in the URL
-
-    if (response.statusCode == 200) {
-      setState(() {
-        users.remove(user);
-        filteredUsers.remove(user); // Remove from filtered list as well
-      });
-    } else {
-      // Handle the error
-      print('Failed to delete user');
+  void printAllUserImages() {
+    for (var user in users) {
+      print('User: ${user.name}, Image URL: ${user.imageUrls}');
     }
-  }
-
-  void showDeleteConfirmationDialog(User user) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Account'),
-          content: const Text('Are you sure you want to delete this user account?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('No'),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteUser(user);
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Yes, Delete'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
-          backgroundColor: const Color(0xFFFF5C01), // Set custom color
-          title: const Text('User Management'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFF5C01),
+        title: const Text('User Management'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return  const AdminPage();
-                }));
-                        },
-          ),
+              return const AdminPage();
+            }));
+          },
         ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -129,27 +95,19 @@ class _ManageAccountState extends State<ManageAccount> {
               itemCount: filteredUsers.length,
               itemBuilder: (context, index) {
                 final user = filteredUsers[index];
+
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage('assets/profile_${index + 1}.jpg'), // Replace with actual image path
+                    backgroundImage: user.imageUrls != null && user.imageUrls!.isNotEmpty
+                        ? NetworkImage(user.imageUrls!)
+                        : const NetworkImage('https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png'),
                   ),
                   title: Text(user.name),
                   subtitle: Text(user.email),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(user.activity),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Color(0xFFFF5C00)),
-                        onPressed: () {
-                          showDeleteConfirmationDialog(user);
-                        },
-                      ),
-                    ],
-                  ),
+                  trailing: Text(user.activity),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                      return UserDetailsPage(user: user);
+                      return UserDetailsScreen(email: user.email);
                     }));
                   },
                 );

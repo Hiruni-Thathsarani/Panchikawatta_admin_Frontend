@@ -6,6 +6,7 @@ import 'package:panchikawatta/screens/admin/buyer2.dart';
 import 'package:panchikawatta/screens/admin/manage_accounts.dart';
 import 'package:panchikawatta/screens/admin/sellerLocation.dart';
 import 'package:panchikawatta/screens/admin/services.dart';
+import 'package:panchikawatta/screens/admin/settings.dart';
 import 'package:panchikawatta/screens/admin/sparepartlist.dart';
 import 'package:panchikawatta/screens/admin/vehiclelist.dart';
 import 'package:panchikawatta/screens/admin/view_Analytics.dart';
@@ -19,6 +20,7 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   late Future<Map<String, dynamic>> _futureData;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -54,10 +56,35 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Navigate to the selected page
+    switch (index) {
+      case 0:
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AdminPage()));
+        break;
+      case 1:
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ViewAnalyticApp()));
+        break;
+      case 2:
+        // Add your "Add" page navigation here
+        break;
+      case 3:
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) =>  SettingsPage())); // Navigate to SettingsPage
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Portal')),
+      appBar: AppBar(
+        title: const Text('Admin Portal'),
+        automaticallyImplyLeading: false, // Remove the back button
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _futureData,
         builder: (context, snapshot) {
@@ -87,7 +114,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.delete, color: Color(0xFFFF5C01)),
-            label: 'analyze',
+            label: 'Analyze',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add, color: Color(0xFFFF5C01)),
@@ -98,6 +125,8 @@ class _AdminPageState extends State<AdminPage> {
             label: 'Settings',
           ),
         ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -114,12 +143,13 @@ class _AdminPageState extends State<AdminPage> {
               color: Color(0xFFEBEBEB),
               shape: BoxShape.circle,
             ),
-            child: IconButton(
-              onPressed: () {
-                // Handle profile picture upload action here
-              },
-              iconSize: 80,
-              icon: const Icon(Icons.person),
+            child: ClipOval(
+              child: Image.network(
+                'https://i.pinimg.com/564x/ee/34/34/ee34347211a3d0744667a86096949da8.jpg',
+                fit: BoxFit.cover,
+                width: 120,
+                height: 120,
+              ),
             ),
           ),
           const SizedBox(height: 5),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:panchikawatta/screens/admin/admin_page.dart';
 
 void main() {
@@ -25,13 +24,14 @@ class _LoginPageState extends State<LoginPage> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter both email and password')),
+        const SnackBar(content: Text('Please enter both email and password')),
       );
       return;
     }
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/admin/login-admin'), // Replace with your backend URL
+      Uri.parse(
+          'http://10.0.2.2:8000/admin/login-admin'), // Replace with your backend URL
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'email': email, 'password': password}),
     );
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to AdminPage on successful login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => AdminPage()),
+        MaterialPageRoute(builder: (context) => const AdminPage()),
       );
     } else {
       final data = json.decode(response.body);
@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,14 +69,25 @@ class _LoginPageState extends State<LoginPage> {
               'lib/src/img/orange logo 1.png',
               height: 150,
             ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(
-                'Welcome to Panchikawatta',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            const SizedBox(height: 20),
+            const Center(
+              child: Column(
+                children: [
+                  Text(
+                    'Welcome to Panchikawatta ',
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 11, 11, 11)),
+                  ),
+                  Text(
+                    'Admin portal',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -86,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
@@ -97,30 +108,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
               obscureText: true,
             ),
-            SizedBox(height: 10),
-            Align(
+            const SizedBox(height: 10),
+            const Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {},
-                child: Text('Forgot Password?'),
-              ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                backgroundColor: Color(0xFFFF5C01),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                backgroundColor: const Color(0xFFFF5C01),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Login',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Sign Up text
           ],
         ),
@@ -128,4 +135,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-

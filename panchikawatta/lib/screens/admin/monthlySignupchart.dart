@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class AppColors {
   static const contentColor = Color(0xFFFF5C00);
-  static const contentColor2 = Color.fromARGB(255, 27, 26, 26);
+  static const contentColor2 = Color.fromARGB(255, 20, 8, 122);
   static const mainGridLineColor = Color.fromARGB(217, 70, 70, 71);
 }
 
@@ -22,14 +22,14 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
     AppColors.contentColor2,
   ];
 
-  bool showAvg = false;
+  bool showAvg = true;
 
-  List<Map<String, dynamic>> monthlyData = []; // List to hold monthly data
+  List<Map<String, dynamic>> monthlyData = [];
 
   @override
   void initState() {
     super.initState();
-    fetchData(); // Fetch data when widget initializes
+    fetchData();
   }
 
   Future<void> fetchData() async {
@@ -52,7 +52,7 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 13, 14, 72),
+      color: Color.fromARGB(255, 5, 5, 5),
       child: Stack(
         children: <Widget>[
           AspectRatio(
@@ -60,7 +60,7 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
             child: Padding(
               padding: const EdgeInsets.only(
                 right: 18,
-                left: 12,
+                left: 18,
                 top: 100,
                 bottom: 12,
               ),
@@ -81,7 +81,7 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
               child: Text(
                 'avg',
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 18,
                   color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
                 ),
               ),
@@ -129,14 +129,17 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
     String text;
     switch (value.toInt()) {
       case 1:
-        text = '10K';
+        text = '05';
         break;
       case 3:
-        text = '30k';
+        text = '10';
         break;
       case 5:
-        text = '50k';
+        text = '15';
         break;
+      case 7:
+        text = '20';
+
       default:
         return Container();
     }
@@ -186,7 +189,8 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
                     transform:
                         Matrix4.rotationZ(-1.5708), // Rotate by -90 degrees
                     child: Text(monthlyData[index]['month'],
-                        style: const TextStyle(fontSize: 12, color: Colors.white)),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
                   );
                 }
               }
@@ -199,13 +203,26 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
             showTitles: true,
             interval: 1,
             getTitlesWidget: (value, meta) {
+              final int maxCount = monthlyData.isNotEmpty
+                  ? monthlyData.map((data) => data['count']).reduce((a, b) => a > b ? a : b)
+                  : 0;
+
               switch (value.toInt()) {
                 case 1:
-                  return const Text('10K', style: TextStyle(color: Colors.white));
+                  return Text('${(maxCount * 0.2).round()}',
+                      style: const TextStyle(color: Colors.white));
+                case 2:
+                  return Text('${(maxCount * 0.4).round()}',
+                      style: const TextStyle(color: Colors.white));
                 case 3:
-                  return const Text('30k', style: TextStyle(color: Colors.white));
+                  return Text('${(maxCount * 0.6).round()}',
+                      style: const TextStyle(color: Colors.white));
+                case 4:
+                  return Text('${(maxCount * 0.8).round()}',
+                      style: const TextStyle(color: Colors.white));
                 case 5:
-                  return const Text('50k', style: TextStyle(color: Colors.white));
+                  return Text('${(maxCount * 1).round()}',
+                      style: const TextStyle(color: Colors.white));
                 default:
                   return const Text('');
               }
@@ -220,12 +237,12 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
       minX: 0,
       maxX: monthlyData.length.toDouble() - 1,
       minY: 0,
-      maxY: 6,
+      maxY: 5,
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(monthlyData.length, (index) {
             final count = monthlyData[index]['count'].toDouble();
-            return FlSpot(index.toDouble(), count);
+            return FlSpot(index.toDouble(), count / (monthlyData.map((data) => data['count']).reduce((a, b) => a > b ? a : b) / 5));
           }),
           isCurved: true,
           gradient: LinearGradient(
@@ -251,7 +268,7 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
 
   LineChartData avgData() {
     return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
+      lineTouchData: const LineTouchData(enabled: true),
       gridData: FlGridData(
         show: true,
         drawHorizontalLine: true,
@@ -285,7 +302,8 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
                     transform:
                         Matrix4.rotationZ(-1.5708), // Rotate by -90 degrees
                     child: Text(monthlyData[index]['month'],
-                        style: const TextStyle(fontSize: 12, color: Colors.white)),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
                   );
                 }
               }
@@ -297,18 +315,7 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            getTitlesWidget: (value, meta) {
-              switch (value.toInt()) {
-                case 1:
-                  return const Text('10K', style: TextStyle(color: Colors.white));
-                case 3:
-                  return const Text('30k', style: TextStyle(color: Colors.white));
-                case 5:
-                  return const Text('50k', style: TextStyle(color: Colors.white));
-                default:
-                  return const Text('');
-              }
-            },
+            getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
             interval: 1,
           ),
@@ -322,25 +329,23 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
       ),
       borderData: FlBorderData(
         show: false,
+        border: Border.all(
+          color: Color.fromARGB(255, 55, 67, 77),
+        ),
       ),
       minX: 0,
       maxX: monthlyData.length.toDouble() - 1,
       minY: 0,
-      maxY: 6,
+      maxY: 5,
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(monthlyData.length, (index) {
-            return FlSpot(index.toDouble(),
-                3.44); // Adjust this to actual data if available
+            final count = monthlyData[index]['count'].toDouble();
+            return FlSpot(index.toDouble(), count / (monthlyData.map((data) => data['count']).reduce((a, b) => a > b ? a : b) / 5));
           }),
           isCurved: true,
           gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.5)!,
-            ],
+            colors: gradientColors,
           ),
           barWidth: 5,
           isStrokeCapRound: true,
@@ -350,14 +355,9 @@ class _MonthlySignChartState extends State<MonthlySignChart> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
+              colors: gradientColors
+                  .map((color) => color.withOpacity(0.3))
+                  .toList(),
             ),
           ),
         ),

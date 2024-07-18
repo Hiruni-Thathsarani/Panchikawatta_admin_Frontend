@@ -17,7 +17,7 @@ class PopularAds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black, // Set background color to black
+      color: const Color.fromARGB(255, 248, 246, 246), // Set background color to black
       child: AspectRatio(
         aspectRatio: 1,
         child: Card(

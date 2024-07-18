@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:carousel_slider/carousel_slider.dart';
 
 class SparePartDetails extends StatelessWidget {
   final int sparePartId;
@@ -42,29 +43,63 @@ class SparePartDetails extends StatelessWidget {
             return const Center(child: Text('No details found'));
           } else {
             var sparePart = snapshot.data!;
+            var imageUrls = List<String>.from(sparePart['imageUrls'] ?? []);
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200.0,
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: true,
+                      autoPlayAnimationDuration:
+                          const Duration(milliseconds: 800),
+                      viewportFraction: 0.8,
+                    ),
+                    items: imageUrls.map((url) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 200, 200, 200),
+                            ),
+                            child: Image.network(
+                              url,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
                   Text(
-                    sparePart['title'],
+                    sparePart['title'] ?? 'No title available',
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  Text('Description', style: const TextStyle(fontSize: 16)),
+                  const Text('Description', style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(
-                    sparePart['description'],
+                    sparePart['description'] ?? 'No description available',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  Text('Price', style: const TextStyle(fontSize: 16)),
+                  const Text('Price', style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${sparePart['price']}',
+                    '\$${sparePart['price'] ?? 'N/A'}',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -74,7 +109,7 @@ class SparePartDetails extends StatelessWidget {
                       Expanded(
                         child: ListTile(
                           leading: const Icon(Icons.calendar_today),
-                          title: Text('Created At: ${sparePart['createdAt']}'),
+                          title: Text('Created At: ${sparePart['createdAt'] ?? 'N/A'}'),
                         ),
                       ),
                     ],
@@ -83,7 +118,7 @@ class SparePartDetails extends StatelessWidget {
                   const Text('Business Name', style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(
-                    sparePart['businessName'],
+                    sparePart['businessName'] ?? 'N/A',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
@@ -92,7 +127,7 @@ class SparePartDetails extends StatelessWidget {
                       style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(
-                    sparePart['businessAddress'],
+                    sparePart['businessAddress'] ?? 'N/A',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),

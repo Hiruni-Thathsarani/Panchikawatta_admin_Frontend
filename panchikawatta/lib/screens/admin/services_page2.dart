@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:carousel_slider/carousel_slider.dart';
 import 'services.dart'; // Import the Service class
 
 class ServiceDetails extends StatelessWidget {
@@ -26,17 +27,17 @@ class ServiceDetails extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
-          backgroundColor: const Color(0xFFFF5C01), // Set custom color
-          title: const Text('Services'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return  Services();
-                }));
-                        },
-          ),
-        ),
+              backgroundColor: const Color(0xFFFF5C01), // Set custom color
+              title: const Text('Services'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                    return Services();
+                  }));
+                },
+              ),
+            ),
             body: const Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
@@ -54,6 +55,8 @@ class ServiceDetails extends StatelessWidget {
           );
         } else {
           Map<String, dynamic> data = snapshot.data!;
+          var imageUrls = List<String>.from(data['imageUrls'] ?? []);
+
           return Scaffold(
             appBar: AppBar(
               title: Text(data['title']),
@@ -70,12 +73,12 @@ class ServiceDetails extends StatelessWidget {
                 title: data['title'],
                 description: data['description'],
                 createdAt: DateTime.parse(data['createdAt']),
-//imageUrl: '', // Add your image URL if available
                 sellerId: '',
-                 id: serviceId, // Ensure you have the sellerId if needed
+                id: serviceId, // Ensure you have the sellerId if needed
               ),
               businessName: data['businessName'],
               serviceCenterLocation: data['businessAddress'],
+              imageUrls: imageUrls,
             ),
           );
         }
@@ -88,11 +91,13 @@ class ServicedetailsPage extends StatelessWidget {
   final Service service;
   final String businessName;
   final String serviceCenterLocation;
+  final List<String> imageUrls;
 
   ServicedetailsPage({
     required this.service,
     required this.businessName,
     required this.serviceCenterLocation,
+    required this.imageUrls,
   });
 
   @override
@@ -102,10 +107,39 @@ class ServicedetailsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 200.0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              aspectRatio: 16 / 9,
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enableInfiniteScroll: true,
+              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+              viewportFraction: 0.8,
+            ),
+            items: imageUrls.map((url) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 200, 200, 200),
+                    ),
+                    child: Image.network(
+                      url,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
           Center(
             child: Column(
               children: [
-              //  Image.network(service.imageUrl, height: 150),
                 const SizedBox(height: 8),
                 Text(
                   service.title,

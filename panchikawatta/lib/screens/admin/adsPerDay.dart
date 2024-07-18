@@ -13,7 +13,7 @@ class Adsperday extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Daily posted Ads',
+      title: 'Daily Posted Ads',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -41,7 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _fetchSpareParts(DateTime selectedDate) async {
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8000/admin/sparepartsBydate?selectedDate=$selectedDate'),
+        'http://10.0.2.2:8000/admin/sparepartsBydate?selectedDate=$selectedDate',
+      ),
     );
 
     if (response.statusCode == 200) {
@@ -64,8 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFF5C01), // Set custom color
-        title: const Text('Daily posted Ads'),
+        backgroundColor: const Color(0xFFFF5C01),
+        title: const Text('Daily Posted Ads'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.circular(12),
               child: SizedBox(
                 height: 340,
-                width: 300, // Adjust the height here
+                width: 300,
                 child: TableCalendar(
                   firstDay: DateTime.utc(2010, 10, 16),
                   lastDay: DateTime.utc(2030, 3, 14),
@@ -125,21 +126,23 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: _tasks.isEmpty
                 ? const Center(
-                    child:
-                        Text('No spare parts available for the selected date.'))
+                    child: Text('No spare parts available for the selected date.'))
                 : CarouselSlider(
                     options: CarouselOptions(
-                      height: 500, // Increased height
+                      height: 500,
                       enlargeCenterPage: true,
                       autoPlay: true,
-                      aspectRatio: 16 / 9,
+                      aspectRatio: 16/9,
                       autoPlayCurve: Curves.fastOutSlowIn,
                       enableInfiniteScroll: true,
-                      autoPlayAnimationDuration: const Duration(
-                          milliseconds: 700), // Smoother transition
-                      viewportFraction: 0.6, // Larger items
+                      autoPlayAnimationDuration: const Duration(milliseconds: 700),
+                      viewportFraction: 0.6,
                     ),
                     items: _tasks.map((task) {
+                      
+                      String imageUrl = task['image'] ?? 'https://example.com/default_image.png';
+                      print(imageUrl);
+
                       return Builder(
                         builder: (BuildContext context) {
                           return Card(
@@ -153,10 +156,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset(
-                                    task['image'] ?? 'lib/assets/no_image.png',
-                                    height: 50, // Increased image height
+                                  Image.network(
+                                    imageUrl,
+                                    height: 50,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.error); // Placeholder for errors
+                                    },
                                   ),
                                   const SizedBox(height: 10),
                                   Text(

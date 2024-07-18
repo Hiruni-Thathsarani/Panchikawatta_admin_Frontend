@@ -103,20 +103,22 @@ class VehicleListPageState extends State<VehicleListPage> {
                 final model = vehicle['model'] ?? 'Unknown Model';
                 final year = vehicle['year'] ?? 'Unknown Year';
                 final type = vehicle['type'] ?? 'Unknown Type';
-                var imageUrl = vehicle['imageUrl'] ??
+                var imageUrl = vehicle['imageUrls'] ??
                     'https://via.placeholder.com/900'; // Default placeholder URL
 
-                // Replace with actual URLs based on vehicle type
-                if (type == 'Car') {
-                  imageUrl = 'https://img.freepik.com/free-vector/white-sedan-car-isolated-white-vector_53876-67413.jpg?w=900&t=st=1719593369~exp=1719593969~hmac=4658048734bd24e1daacea3b83fe11711f7eaa221f30690dcb224af4be3c53b8';
-                } else if (type == 'Lorry') {
-                  imageUrl = 'https://www.shutterstock.com/shutterstock/photos/2406473249/display_1500/stock-vector-red-truck-art-semi-truck-american-trailer-haul-design-template-powerful-engine-lorry-art-cartoon-2406473249.jpg';
-                } else if (type == 'Motorcycle') {
-                  imageUrl = 'https://img.freepik.com/free-photo/black-motorcycle-white_1398-276.jpg?t=st=1719593653~exp=1719597253~hmac=b1f0976d1bfa3f982a12922772344b327669243382c369aa7bfd7bf57f403939&w=996';
-                } else if (type == 'Threewheel') {
-                  imageUrl = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.justdial.com%2Fjdmart%2FErnakulam%2FBajaj-Auto-Rickshaw-Efficient-Three-Wheeler%2Fpid-2020285976%2F0484PX484-X484-210416112425-S6Q7&psig=AOvVaw20OTp6wgS-MKgnx4JZALmV&ust=1719806979224000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCKjmjLG6gocDFQAAAAAdAAAAABAj';
-                } else if (type == 'Van') {
-                  imageUrl = 'https://img.freepik.com/premium-photo/3d-render-van_161488-118.jpg?w=1060';
+                // Replace with actual URLs based on vehicle type if no image URL from backend
+                if (imageUrl == 'https://via.placeholder.com/900') {
+                  if (type == 'Car') {
+                    imageUrl = 'https://img.freepik.com/free-vector/white-sedan-car-isolated-white-vector_53876-67413.jpg?w=900&t=st=1719593369~exp=1719593969~hmac=4658048734bd24e1daacea3b83fe11711f7eaa221f30690dcb224af4be3c53b8';
+                  } else if (type == 'Lorry') {
+                    imageUrl = 'https://www.shutterstock.com/shutterstock/photos/2406473249/display_1500/stock-vector-red-truck-art-semi-truck-american-trailer-haul-design-template-powerful-engine-lorry-art-cartoon-2406473249.jpg';
+                  } else if (type == 'Motorcycle') {
+                    imageUrl = 'https://img.freepik.com/free-photo/black-motorcycle-white_1398-276.jpg?t=st=1719593653~exp=1719597253~hmac=b1f0976d1bfa3f982a12922772344b327669243382c369aa7bfd7bf57f403939&w=996';
+                  } else if (type == 'Threewheel') {
+                    imageUrl = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.justdial.com%2Fjdmart%2FErnakulam%2FBajaj-Auto-Rickshaw-Efficient-Three-Wheeler%2Fpid-2020285976%2F0484PX484-X484-210416112425-S6Q7&psig=AOvVaw20OTp6wgS-MKgnx4JZALmV&ust=1719806979224000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCKjmjLG6gocDFQAAAAAdAAAAABAj';
+                  } else if (type == 'Van') {
+                    imageUrl = 'https://img.freepik.com/premium-photo/3d-render-van_161488-118.jpg?w=1060';
+                  }
                 }
 
                 final imageHeight = getImageHeight(type);
